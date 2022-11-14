@@ -26,5 +26,14 @@ namespace PassSaver.Services
             _passwordDbContext.SaveChanges();
             return password.Id;
         }
+        public bool DeletePassword(int passId,int userId)
+        {
+            var result= _passwordDbContext.Passwords.FirstOrDefault(p=>p.Id==passId&&p.UserId==userId);
+            if (result==null)
+                return false;
+            _passwordDbContext.Passwords.Remove(result);
+            _passwordDbContext.SaveChanges();
+            return true;
+        }
     }
 }

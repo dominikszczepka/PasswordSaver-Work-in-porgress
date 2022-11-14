@@ -18,6 +18,12 @@ namespace PassSaver.Controllers
             _mapper = mapper;
             passwordServices= new PasswordServices(_passwordDbContext,_mapper);
         }
+        [HttpDelete]
+        public ActionResult DeletePassword([FromHeader]int passId, [FromHeader]int userId)
+        {
+            var isDeleted = passwordServices.DeletePassword(passId,userId);
+            return isDeleted?NoContent():NotFound();
+        }
         [HttpPost]
         public ActionResult AddPassword([FromBody] AddPasswordDto dto)
         {
