@@ -9,14 +9,14 @@ namespace PassSaver.Controllers
     [Route("password")]
     public class PasswordController : ControllerBase
     {
-        private readonly PassSaverDbContext _passwordDbContext;
+        private readonly PassSaverDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly PasswordServices passwordServices;
-        public PasswordController(PassSaverDbContext passwordDbContext,IMapper mapper)
+        public PasswordController(PassSaverDbContext dbContext,IMapper mapper)
         {
-            _passwordDbContext = passwordDbContext;
+            _dbContext = dbContext;
             _mapper = mapper;
-            passwordServices= new PasswordServices(_passwordDbContext,_mapper);
+            passwordServices= new PasswordServices(_dbContext,_mapper);
         }
         [HttpDelete]
         public ActionResult DeletePassword([FromHeader]int passId, [FromHeader]int userId)
@@ -33,6 +33,16 @@ namespace PassSaver.Controllers
             }
             var passwordId = passwordServices.AddPassword(dto);
             return Created($"password/{passwordId}",null);
+        }
+        [HttpPut]
+        public ActionResult EditPassword([FromBody] EditPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var isUpdated = passwordServices.EditPassword(dto);
+            return isUpdated ? Ok() : NotFound();
         }
         [HttpGet]
         public ActionResult<IEnumerable<PasswordDto>> GetAll([FromBody] User currentUser)

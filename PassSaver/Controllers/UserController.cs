@@ -10,14 +10,14 @@ namespace PassSaver.Controllers
     [Route("currentUser")]
     public class UserController : ControllerBase
     {
-        private readonly PassSaverDbContext _passwordDbContext;
+        private readonly PassSaverDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly UserServices userServices;
-        public UserController(PassSaverDbContext passwordDbContext, IMapper mapper)
+        public UserController(PassSaverDbContext dbContext, IMapper mapper)
         {
-            _passwordDbContext = passwordDbContext;
+            _dbContext = dbContext;
             _mapper = mapper;
-            userServices= new UserServices(_passwordDbContext, _mapper);
+            userServices= new UserServices(_dbContext, _mapper);
         }
 
         [HttpGet]
@@ -30,6 +30,33 @@ namespace PassSaver.Controllers
                 return NotFound();
             }
             return Ok(currentUser);
+        }
+        [HttpGet]
+        public ActionResult IsUserOkToAdd([FromBody] AddUserDto dto)
+        {
+            var msg = userServices.IsUserOkToAdd(dto);
+            return msg==null? Ok() :BadRequest(msg) ;
+        }
+        [HttpPut]
+        public ActionResult EditCurrentUser([FromHeader] int id, [FromBody] EditUserDto dto)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var isUpdated = userServices.EditCurrentUser(id, dto);
+            return isUpdated ? Ok() : NotFound();
+        }
+        [HttpPost]
+        public ActionResult CreateUser([FromBody] AddUserDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var userId = userServices.CreateUser(dto);
+            return Created($"password/{userId}", null);
         }
     }
 }

@@ -1,13 +1,15 @@
-﻿using PassSaver.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PassSaver.Models
 {
-    public class UserDto
+    public class AddUserDto
     {
-        public int Id { get; set; }
+        [Required]
+        [MaxLength(64)]
         public string Username { get; set; }
+        [Required]
         public int UserHashedPassword { get; set; }
+        [Required]
         public string UserEmail { get; set; }
-        public virtual List<PasswordDto> Passwords { get; set; }
     }
 }

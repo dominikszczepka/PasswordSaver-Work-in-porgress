@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PassSaver.Entities;
 using PassSaver.Models;
@@ -24,6 +25,31 @@ namespace PassSaver.Services
 
             var userDto = _mapper.Map<UserDto>(currentUser);
             return userDto;
+        }
+        public int CreateUser(AddUserDto dto)
+        {
+            var user = _mapper.Map<User>(dto);
+            _dbContext.Add(user);
+            _dbContext.SaveChanges();
+            return user.Id;
+        }
+        public bool EditCurrentUser(int id, EditUserDto dto)
+        {
+            var user= _dbContext.Users.Where(p => p.Id == id).FirstOrDefault();
+            if (user == null) return false;
+            user.UserEmail = dto.UserEmail;
+            user.UserHashedPassword = dto.UserHashedPassword;
+
+            _dbContext.SaveChanges();
+            return true;
+        }
+        public string IsUserOkToAdd(AddUserDto dto)
+        {
+            var duplicateUsers = _dbContext.Users.Where(u => u.Username == dto.Username);
+            if (duplicateUsers != null) return "Username already exists";
+            duplicateUsers = _dbContext.Users.Where(u => u.UserEmail == dto.UserEmail);
+            if (duplicateUsers != null) return "Email already exists";
+            return null;
         }
     }
 }

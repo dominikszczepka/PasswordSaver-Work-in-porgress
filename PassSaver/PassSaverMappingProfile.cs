@@ -12,7 +12,7 @@ namespace PassSaver
             CreateMap<User, UserDto>();
 
             CreateMap<AddPasswordDto, Password>();
-
+            CreateMap<AddUserDto, User>();
         }
     }
 }
