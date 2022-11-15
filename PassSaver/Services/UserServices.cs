@@ -10,10 +10,12 @@ namespace PassSaver.Services
     {
         private readonly PassSaverDbContext _dbContext;
         private readonly IMapper _mapper;
-        public UserServices(PassSaverDbContext dbContext, IMapper mapper)
+        private readonly ILogger<UserServices> _logger;
+        public UserServices(PassSaverDbContext dbContext, IMapper mapper, ILogger<UserServices> logger)
         {
             _dbContext = dbContext;
-            _mapper = mapper;   
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public UserDto GetCurrentUser(int id)
@@ -28,6 +30,7 @@ namespace PassSaver.Services
         }
         public int CreateUser(AddUserDto dto)
         {
+            _logger.LogInformation($"User {dto.Username} created");
             var user = _mapper.Map<User>(dto);
             _dbContext.Add(user);
             _dbContext.SaveChanges();
@@ -35,6 +38,7 @@ namespace PassSaver.Services
         }
         public bool EditCurrentUser(int id, EditUserDto dto)
         {
+            _logger.LogInformation($"User with id{id} was edited");
             var user= _dbContext.Users.Where(p => p.Id == id).FirstOrDefault();
             if (user == null) return false;
             user.UserEmail = dto.UserEmail;
