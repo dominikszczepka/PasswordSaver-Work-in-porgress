@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity;
+using NLog.Web;
 using PassSaver.Entities;
 using PassSaver.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Host.UseNLog();
 builder.Services.AddControllers();
 builder.Services.AddScoped<UsersSeeder>();
 builder.Services.AddScoped<PasswordSeeder>();

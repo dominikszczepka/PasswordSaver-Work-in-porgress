@@ -13,11 +13,13 @@ namespace PassSaver.Controllers
         private readonly PassSaverDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly UserServices userServices;
-        public UserController(PassSaverDbContext dbContext, IMapper mapper)
+        private readonly ILogger<UserServices> _logger;
+        public UserController(PassSaverDbContext dbContext, IMapper mapper, ILogger<UserServices> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            userServices= new UserServices(_dbContext, _mapper);
+            _logger = logger;
+            userServices = new UserServices(_dbContext, _mapper,_logger);
         }
 
         [HttpGet]
