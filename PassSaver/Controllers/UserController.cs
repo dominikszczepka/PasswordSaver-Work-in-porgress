@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using PassSaver.Entities;
 using PassSaver.Models;
 using PassSaver.Services;
@@ -33,10 +34,10 @@ namespace PassSaver.Controllers
             }
             return Ok(currentUser);
         }
-        [HttpGet]
-        public ActionResult IsUserOkToAdd([FromBody] AddUserDto dto)
+       [HttpGet]
+        public ActionResult<string> IsUserInTheDB([FromBody] AddUserDto dto)
         {
-            var msg = userServices.IsUserOkToAdd(dto);
+            var msg = userServices.AreUserCredentialsInDB(dto);
             return msg==null? Ok() :BadRequest(msg) ;
         }
         [HttpPut]
@@ -53,6 +54,11 @@ namespace PassSaver.Controllers
         [HttpPost]
         public ActionResult CreateUser([FromBody] AddUserDto dto)
         {
+            var msg = userServices.AreUserCredentialsInDB(dto);
+            if (!msg.Equals(""))
+            {
+                return BadRequest(msg);
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

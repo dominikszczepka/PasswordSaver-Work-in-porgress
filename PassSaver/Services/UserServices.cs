@@ -47,7 +47,7 @@ namespace PassSaver.Services
             _dbContext.SaveChanges();
             return true;
         }
-        public string IsUserOkToAdd(AddUserDto dto)
+        public string AreUserCredentialsInDB(AddUserDto dto)
         {
             var duplicateUsers = _dbContext.Users.Where(u => u.Username == dto.Username);
             if (duplicateUsers != null) return "Username already exists";
