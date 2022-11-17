@@ -7,6 +7,7 @@ using PassSaver.Services;
 namespace PassSaver.Controllers
 {
     [Route("password")]
+    [ApiController]
     public class PasswordController : ControllerBase
     {
         private readonly PassSaverDbContext _dbContext;
@@ -27,20 +28,12 @@ namespace PassSaver.Controllers
         [HttpPost]
         public ActionResult AddPassword([FromBody] AddPasswordDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var passwordId = passwordServices.AddPassword(dto);
             return Created($"password/{passwordId}",null);
         }
         [HttpPut]
         public ActionResult EditPassword([FromBody] EditPasswordDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var isUpdated = passwordServices.EditPassword(dto);
             return isUpdated ? Ok() : NotFound();
         }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using NLog.Web;
 using PassSaver.Entities;
+using PassSaver.Middleware;
+using PassSaver.Models;
 using PassSaver.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,7 @@ builder.Services.AddScoped<UsersSeeder>();
 builder.Services.AddScoped<PasswordSeeder>();
 builder.Services.AddDbContext<PassSaverDbContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<ErrorHandler>();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -22,6 +25,7 @@ using (var scope = app.Services.CreateScope())
     passwordSeeder.Seed();
 }
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ErrorHandler>();
 
 app.UseHttpsRedirection();
 

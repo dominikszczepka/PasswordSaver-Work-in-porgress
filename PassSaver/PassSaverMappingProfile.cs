@@ -13,6 +13,8 @@ namespace PassSaver
 
             CreateMap<AddPasswordDto, Password>();
             CreateMap<AddUserDto, User>();
+
+            CreateMap<AddUserDto, CheckIfUserExistsDto>();
         }
     }
 }
