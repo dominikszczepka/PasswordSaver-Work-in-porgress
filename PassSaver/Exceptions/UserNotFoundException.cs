@@ -2,7 +2,7 @@
 {
     public class UserNotFoundException : Exception 
     {
-        string Message { get; set; }
+        public override string Message { get; }
         public UserNotFoundException() : base()
         {
             Message = "User not found.";

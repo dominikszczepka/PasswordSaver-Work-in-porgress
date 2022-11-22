@@ -8,7 +8,6 @@ using PassSaver.Services;
 
 namespace PassSaver.Controllers
 {
-    [Route("currentUser")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -25,31 +24,35 @@ namespace PassSaver.Controllers
             userServices = new UserServices(_dbContext, _mapper, _logger);
             _currentUser = currentUser;
         }
-
+        [Route("currentUser")]
         [HttpGet]
         public ActionResult<UserDto> GetCurrent()
         {
             var currentUser = userServices.GetCurrentUser(_currentUser.Id);
             return Ok(currentUser);
         }
-       [HttpGet]
+        [Route("credCheck")]
+        [HttpGet]
         public ActionResult<string> AreUserCredentialsTaken([FromBody] AddUserDto dto)
         {
             userServices.AreUserCredentialsTaken(dto);
             return Ok();
         }
+        [Route("userExists")]
         [HttpGet]
         public ActionResult IsUserInTheDB([FromBody] CheckIfUserExistsDto dto)
         {
             _currentUser = userServices.IsUserInTheDB(dto);
             return Ok();
         }
+        [Route("editUser")]
         [HttpPut]
         public ActionResult EditCurrentUser([FromBody] EditUserDto dto)
         {
             userServices.EditCurrentUser(_currentUser.Id, dto);
             return Ok();
         }
+        [Route("createUser")]
         [HttpPost]
         public ActionResult CreateUser([FromBody] AddUserDto dto)
         {

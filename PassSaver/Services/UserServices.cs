@@ -56,7 +56,7 @@ namespace PassSaver.Services
             var user= _dbContext.Users.Where(p => p.Id == id).FirstOrDefault();
             if (user == null) throw new UserNotFoundException();
             user.UserEmail = dto.UserEmail;
-            user.UserHashedPassword = dto.UserHashedPassword;
+            user.UserHashedPassword = _passHasher.Hash(dto.UserPassword);
 
             _dbContext.SaveChanges();
         }
@@ -70,7 +70,7 @@ namespace PassSaver.Services
         public User IsUserInTheDB(CheckIfUserExistsDto dto)
         {
             var hashedDtoPassword = _passHasher.Hash(dto.UserUnhashedPassword);
-            var matchingUser = _dbContext.Users.Where(u => u.Username == dto.Username && u.UserEmail == hashedDtoPassword).FirstOrDefault();
+            var matchingUser = _dbContext.Users.Where(u => u.Username == dto.Username && u.UserHashedPassword == hashedDtoPassword).FirstOrDefault();
             if (matchingUser == null) throw new UserNotFoundException();
             return matchingUser;
         }

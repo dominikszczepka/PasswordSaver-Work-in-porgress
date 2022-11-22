@@ -6,7 +6,7 @@ using PassSaver.Services;
 
 namespace PassSaver.Controllers
 {
-    [Route("password")]
+    [Route("passwords")]
     [ApiController]
     public class PasswordController : ControllerBase
     {
@@ -19,24 +19,6 @@ namespace PassSaver.Controllers
             _mapper = mapper;
             passwordServices= new PasswordServices(_dbContext,_mapper);
         }
-        [HttpDelete]
-        public ActionResult DeletePassword([FromHeader]int passId, [FromHeader]int userId)
-        {
-            var isDeleted = passwordServices.DeletePassword(passId,userId);
-            return isDeleted?NoContent():NotFound();
-        }
-        [HttpPost]
-        public ActionResult AddPassword([FromBody] AddPasswordDto dto)
-        {
-            var passwordId = passwordServices.AddPassword(dto);
-            return Created($"password/{passwordId}",null);
-        }
-        [HttpPut]
-        public ActionResult EditPassword([FromBody] EditPasswordDto dto)
-        {
-            var isUpdated = passwordServices.EditPassword(dto);
-            return isUpdated ? Ok() : NotFound();
-        }
         [HttpGet]
         public ActionResult<IEnumerable<PasswordDto>> GetAll([FromBody] User currentUser)
         {
@@ -47,5 +29,27 @@ namespace PassSaver.Controllers
             }
             return BadRequest();
         }
+        [Route("/delete")]
+        [HttpDelete]
+        public ActionResult DeletePassword([FromHeader]int passId, [FromHeader]int userId)
+        {
+            var isDeleted = passwordServices.DeletePassword(passId,userId);
+            return isDeleted?NoContent():NotFound();
+        }
+        [Route("/add")]
+        [HttpPost]
+        public ActionResult AddPassword([FromBody] AddPasswordDto dto)
+        {
+            var passwordId = passwordServices.AddPassword(dto);
+            return Created($"password/{passwordId}",null);
+        }
+        [Route("/edit")]
+        [HttpPut]
+        public ActionResult EditPassword([FromBody] EditPasswordDto dto)
+        {
+            var isUpdated = passwordServices.EditPassword(dto);
+            return isUpdated ? Ok() : NotFound();
+        }
+        
     }
 }

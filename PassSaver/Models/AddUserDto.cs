@@ -8,7 +8,7 @@ namespace PassSaver.Models
         [MaxLength(64)]
         public string Username { get; set; }
         [Required]
-        public int UserHashedPassword { get; set; }
+        public string UserHashedPassword { get; set; }
         [Required]
         public string UserEmail { get; set; }
     }
