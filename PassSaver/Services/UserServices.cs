@@ -10,11 +10,11 @@ namespace PassSaver.Services
 {
     public interface IUserServices
     {
-        public UserDto GetCurrentUser(int id);
+        public UserDto GetCurrentUser(int? id);
         public int CreateUser(AddUserDto dto);
-        public void EditCurrentUser(int id, EditUserDto dto);
+        public void EditCurrentUser(int? id, EditUserDto dto);
         public void AreUserCredentialsTaken(AddUserDto dto);
-        public User IsUserInTheDB(CheckIfUserExistsDto dto);
+        public int IsUserInTheDB(CheckIfUserExistsDto dto);
     }
     public class UserServices : IUserServices
     {
@@ -30,8 +30,9 @@ namespace PassSaver.Services
             _passHasher = new PasswordHasher();
         }
 
-        public UserDto GetCurrentUser(int id)
+        public UserDto GetCurrentUser(int? id)
         {
+            if (id == null) throw new UserNotLoggedInException();
             var currentUser = _dbContext
             .Users
             .Include(p => p.Passwords)
@@ -50,8 +51,9 @@ namespace PassSaver.Services
             _dbContext.SaveChanges();
             return user.Id;
         }
-        public void EditCurrentUser(int id, EditUserDto dto)
+        public void EditCurrentUser(int? id, EditUserDto dto)
         {
+            if (id == null) throw new UserNotLoggedInException();
             _logger.LogInformation($"User with id{id} was edited");
             var user= _dbContext.Users.Where(p => p.Id == id).FirstOrDefault();
             if (user == null) throw new UserNotFoundException();
@@ -67,12 +69,12 @@ namespace PassSaver.Services
             duplicateUsers = _dbContext.Users.Where(u => u.UserEmail == dto.UserEmail);
             if (duplicateUsers != null) throw new UserCredentialsTakenException("Email already exists");
         }
-        public User IsUserInTheDB(CheckIfUserExistsDto dto)
+        public int IsUserInTheDB(CheckIfUserExistsDto dto)
         {
             var hashedDtoPassword = _passHasher.Hash(dto.UserUnhashedPassword);
             var matchingUser = _dbContext.Users.Where(u => u.Username == dto.Username && u.UserHashedPassword == hashedDtoPassword).FirstOrDefault();
             if (matchingUser == null) throw new UserNotFoundException();
-            return matchingUser;
+            return matchingUser.Id;
         }
     }
 }

@@ -15,20 +15,20 @@ namespace PassSaver.Controllers
         private readonly IMapper _mapper;
         private readonly UserServices userServices;
         private readonly ILogger<UserServices> _logger;
-        private User _currentUser;
-        public UserController(PassSaverDbContext dbContext, IMapper mapper, ILogger<UserServices> logger, User currentUser)
+        private int? _currentUserId;
+        public UserController(PassSaverDbContext dbContext, IMapper mapper, ILogger<UserServices> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _logger = logger;
             userServices = new UserServices(_dbContext, _mapper, _logger);
-            _currentUser = currentUser;
+            _currentUserId = HttpContext.Session.GetInt32("userId");
         }
         [Route("currentUser")]
         [HttpGet]
         public ActionResult<UserDto> GetCurrent()
         {
-            var currentUser = userServices.GetCurrentUser(_currentUser.Id);
+            var currentUser = userServices.GetCurrentUser(_currentUserId);
             return Ok(currentUser);
         }
         [Route("credCheck")]
@@ -42,14 +42,14 @@ namespace PassSaver.Controllers
         [HttpGet]
         public ActionResult IsUserInTheDB([FromBody] CheckIfUserExistsDto dto)
         {
-            _currentUser = userServices.IsUserInTheDB(dto);
+            _currentUserId = userServices.IsUserInTheDB(dto);
             return Ok();
         }
         [Route("editUser")]
         [HttpPut]
         public ActionResult EditCurrentUser([FromBody] EditUserDto dto)
         {
-            userServices.EditCurrentUser(_currentUser.Id, dto);
+            userServices.EditCurrentUser(_currentUserId, dto);
             return Ok();
         }
         [Route("createUser")]

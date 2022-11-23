@@ -14,7 +14,8 @@ namespace PassSaver
             CreateMap<User, UserDto>();
 
             CreateMap<AddPasswordDto, Password>();
-            CreateMap<AddUserDto, User>();
+            CreateMap<AddUserDto, User>()
+                .ForMember(a => a.UserHashedPassword, b => b.MapFrom(c => _passwordHasher.Hash(c.UserUnhashedPassword)));
 
             CreateMap<AddUserDto, CheckIfUserExistsDto>();
         }
