@@ -3,7 +3,11 @@ using System.Text;
 
 namespace PassSaver
 {
-    public class PasswordHasher
+    public interface IPasswordHasher
+    {
+        string Hash(string originalPassword);
+    }
+    public class PasswordHasher :  IPasswordHasher
     {
         public string Hash(string originalPassword)
         {

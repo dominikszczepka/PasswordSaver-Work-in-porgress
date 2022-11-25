@@ -22,7 +22,7 @@ namespace PassSaver.Services
         private readonly IMapper _mapper;
         private readonly ILogger<UserServices> _logger;
         private readonly PasswordHasher _passHasher;
-        public UserServices(PassSaverDbContext dbContext, IMapper mapper, ILogger<UserServices> logger)
+        public UserServices(PassSaverDbContext dbContext, IMapper mapper, ILogger<UserServices> logger,IPasswordHasher passHasher)
         {
             _dbContext = dbContext;
             _mapper = mapper;

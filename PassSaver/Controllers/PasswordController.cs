@@ -12,17 +12,17 @@ namespace PassSaver.Controllers
     {
         private readonly PassSaverDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly PasswordServices passwordServices;
-        public PasswordController(PassSaverDbContext dbContext,IMapper mapper)
+        private readonly IPasswordServices _passwordServices;
+        public PasswordController(PassSaverDbContext dbContext,IMapper mapper,IPasswordServices passwordServices)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            passwordServices= new PasswordServices(_dbContext,_mapper);
+            _passwordServices= passwordServices;
         }
         [HttpGet]
         public ActionResult<IEnumerable<PasswordDto>> GetAll([FromBody] User currentUser)
         {
-            var passwords = passwordServices.GetAllUsersPasswords(currentUser);
+            var passwords = _passwordServices.GetAllUsersPasswords(currentUser);
             if (passwords.Any())
             {
                 return Ok(passwords);
@@ -33,21 +33,21 @@ namespace PassSaver.Controllers
         [HttpDelete]
         public ActionResult DeletePassword([FromHeader]int passId, [FromHeader]int userId)
         {
-            var isDeleted = passwordServices.DeletePassword(passId,userId);
+            var isDeleted = _passwordServices.DeletePassword(passId,userId);
             return isDeleted?NoContent():NotFound();
         }
         [Route("/add")]
         [HttpPost]
         public ActionResult AddPassword([FromBody] AddPasswordDto dto)
         {
-            var passwordId = passwordServices.AddPassword(dto);
+            var passwordId = _passwordServices.AddPassword(dto);
             return Created($"password/{passwordId}",null);
         }
         [Route("/edit")]
         [HttpPut]
         public ActionResult EditPassword([FromBody] EditPasswordDto dto)
         {
-            var isUpdated = passwordServices.EditPassword(dto);
+            var isUpdated = _passwordServices.EditPassword(dto);
             return isUpdated ? Ok() : NotFound();
         }
         

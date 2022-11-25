@@ -6,10 +6,10 @@ namespace PassSaver
 {
     public class PassSaverMappingProfile : Profile
     {
-        private readonly PasswordHasher _passwordHasher;
-        public PassSaverMappingProfile()
+        private readonly IPasswordHasher _passwordHasher;
+        public PassSaverMappingProfile(IPasswordHasher passwordHasher)
         {
-            _passwordHasher = new PasswordHasher();
+            _passwordHasher = passwordHasher;
             CreateMap<Password, PasswordDto>();
             CreateMap<User, UserDto>();
 
